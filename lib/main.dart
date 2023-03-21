@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as parser;
+import 'package:html/parser.dart' as parse;
 
 void main() => runApp(MyApp());
 
@@ -15,11 +15,17 @@ class _MyAppState extends State<MyApp> {
 
   TextEditingController _controller = TextEditingController();
 
-  Future<bool> hasContactForm(String websiteUrl) async {
-    final response = await http.get(Uri.parse(websiteUrl));
-    final document = parser.parse(response.body);
-    final forms = document.getElementsByTagName('form');
-    return forms.isNotEmpty;
+  Future<bool> hasContactForm(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final document = parse.parse(response.body);
+      final formElements = document.querySelectorAll('form');
+      final hasJsForm = document.querySelectorAll('.contact-form').isNotEmpty;
+      final hasAjaxForm = document.querySelectorAll('[data-contact-form]').isNotEmpty;
+      return formElements.isNotEmpty || hasJsForm || hasAjaxForm;
+    } else {
+      throw Exception('Failed to load website');
+    }
   }
 
   @override
