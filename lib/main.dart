@@ -22,6 +22,7 @@ class _MyAppState extends State<MyApp> {
       final formElements = document.querySelectorAll('form');
       final hasJsForm = document.querySelectorAll('.contact-form').isNotEmpty;
       final hasAjaxForm = document.querySelectorAll('[data-contact-form]').isNotEmpty;
+      //return formElements.isNotEmpty;
       return formElements.isNotEmpty || hasJsForm || hasAjaxForm;
     } else {
       throw Exception('Failed to load website');
