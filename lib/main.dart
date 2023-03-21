@@ -12,18 +12,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   TextEditingController _controller = TextEditingController();
 
   Future<bool> hasContactForm(String url) async {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final document = parse.parse(response.body);
-      final formElements = document.querySelectorAll('form');
-      final hasJsForm = document.querySelectorAll('.contact-form').isNotEmpty;
-      final hasAjaxForm = document.querySelectorAll('[data-contact-form]').isNotEmpty;
-      //return formElements.isNotEmpty;
-      return formElements.isNotEmpty || hasJsForm || hasAjaxForm;
+      final inputElements = document.querySelectorAll(
+          'input[name="name"], input[name="email"], input[name="subject"], input[name="message"], input[name="comment"]');
+      final formElements =
+          document.querySelectorAll('form[action], form[method]');
+      return inputElements.isNotEmpty || formElements.isNotEmpty;
     } else {
       throw Exception('Failed to load website');
     }
@@ -59,19 +58,7 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: () async {
                   final hasForm = await hasContactForm(_controller.text);
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Result'),
-                      content: Text(hasForm ? 'Yes' : 'No'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
+                  print(hasForm);
                 },
                 child: Text('Check'),
               ),
